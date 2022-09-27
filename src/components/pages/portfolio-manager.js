@@ -106,7 +106,6 @@ export default class PortfolioManager extends Component {
                         handleEditClick={this.handleEditClick}
                     />
                 </div>
-
             </div>
         );
     }
