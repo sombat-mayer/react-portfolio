@@ -8,7 +8,8 @@
     background-color: $teal;
     color: white;
     
-    &:active, &:focus {
+    &:active,
+    &:focus {
         outline: none;
     }
 

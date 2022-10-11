@@ -1,13 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import axios from "axios";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash,
-  faSignOutAlt,
-  faEdit,
-  faSpinner 
-} from "@fortawesome/free-solid-svg-icons";
 
 //import PortfolioContainer from "./portfolio/portfolio-container";
 import NavigationContainer from "./navigation/navigation-container";
@@ -20,12 +14,13 @@ import PortfolioManager from "./pages/portfolio-manager";
 import PortfolioDetail from "./portfolio/portfolio-detail";
 import Auth from "./pages/auth";
 import NoMatch from "./pages/no-match";
-
-library.add(faTrash, faSignOutAlt, faEdit, faSpinner);
+import Icons from "../helpers/icons";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+
+    Icons();
 
     this.state = {
       loggedInStatus: "NOT_LOGGED_IN"
@@ -54,7 +49,7 @@ export default class App extends Component {
     });
   }
 
-  checkLoginStatus () {
+  checkLoginStatus() {
     return axios
       .get("https://api.devcamp.space/logged_in", {
         withCredentials: true
@@ -91,20 +86,18 @@ export default class App extends Component {
 
   authorizedPages() {
     return [
-      <Route 
-      key="portfolio-manager"
-      path="/portfolio-manager"
-      component={PortfolioManager} />
+      <Route
+        key="portfolio-manager"
+        path="/portfolio-manager"
+        component={PortfolioManager} />
     ];
   }
 
   render() {
     return (
       <div className="container">
-
         <Router>
           <div>
-
             <NavigationContainer
               loggedInStatus={this.state.loggedInStatus}
               handleSuccessfulLogout={this.handleSuccessfulLogout}
@@ -112,7 +105,6 @@ export default class App extends Component {
 
             <Switch>
               <Route exact path="/" component={Home} />
-
               <Route
                 path="/auth"
                 render={props => (
@@ -125,19 +117,31 @@ export default class App extends Component {
               />
 
               <Route path="/about-me" component={About} />
-
               <Route path="/contact" component={Contact} />
+              <Route path="/blog"
+                render={props => (
+                  <Blog {...props} loggedInStatus={this.state.loggedInStatus} />
+                )}
+              />
 
-              <Route path="/blog" component={Blog} />
+              <Route
+                path="/b/:slug"
+                render={props => (
+                  <BlogDetail
+                    {...props} loggedInStatus={this.state.loggedInStatus}
+                  />
+                )}
+              />
 
-              <Route path="/b/:slug" component={BlogDetail} />
+              {this.state.loggedInStatus === "LOGGED_IN"
+                ? this.authorizedPages()
+                : null}
 
-              {this.state.loggedInStatus === "LOGGED_IN" ? (
-                this.authorizedPages()) : null}
-              
               <Route
                 exact
-                path="/portfolio/:slug" component={PortfolioDetail} />
+                path="/portfolio/:slug"
+                component={PortfolioDetail}
+              />
               <Route component={NoMatch} />
             </Switch>
           </div>
